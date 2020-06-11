@@ -8,8 +8,9 @@ This is a 3D Engine currently capable of:
 
 1. Keyboard and mouse input handling.
 2. .OBJ format model loading (Assimp)
-3. Phong shading.
-4. Portal based occlusion culling.
+3. Blinn-Phong shading.
+4. Normal Mapping
+5. Portal based occlusion culling.
 
 Dependencies
 
@@ -28,4 +29,4 @@ There are few libraries that this code is developed with. Please find them below
 
 Screenshots
 
-![](/Screenshots/SS1.png) ![](/Screenshots/SS2.png)
+![](/Screenshots/SS1.png) ![](/Screenshots/SS2.png) ![](/Screenshots/SS3.png)

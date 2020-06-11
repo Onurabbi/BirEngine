@@ -28,7 +28,6 @@ int main()
     Shader* shader = createShader("Shaders/vertexShader.vs", "Shaders/fragmentShader.fs");
     Model* levelModel = createModel("assets/Medieval/Demonstration.obj", false);
     Level* level = createLevel("level.txt", levelModel);
-    //writeFile(levelModel, level);
     //lighting
     DirectionalLight* dirLight = createDirectionalLight(glm::vec3(200000.0f, 40000.0f, 20000.0f),
                                                         glm::vec3(1.0f,1.0f,1.0f),
@@ -50,7 +49,7 @@ int main()
         deltaTime = currentFrame-lastFrame;
         lastFrame = currentFrame;
         float fps = 1.0f/deltaTime;
-        printf("FPS: %f", fps);
+        printf("FPS: %f\n", fps);
         processInput(window, camera, deltaTime);
         prepareRenderer();
         use(shader);
@@ -62,6 +61,7 @@ int main()
         updateDisplay(window);
         resetLevel(level);
     }
+
     closeDisplay();
     return 0;
 }
