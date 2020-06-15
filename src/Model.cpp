@@ -117,7 +117,7 @@ void loadModel(struct Model* model, const char* path)
     model->roty = 0.0f;
     model->rotz = 0.0f;
     model->scale = 1;
-
+    model->gammaCorrection = true;
     processNode(model, scene->mRootNode, scene);
 }
 
@@ -134,6 +134,7 @@ void processNode(struct Model* model, aiNode* node, const aiScene* scene)
         processNode(model, node->mChildren[i], scene);
     }
 }
+
 
 Mesh* processMesh(Model* model, aiMesh* ai_mesh, const aiScene* scene)
 {
@@ -170,7 +171,6 @@ Mesh* processMesh(Model* model, aiMesh* ai_mesh, const aiScene* scene)
 
     for(unsigned int i=0; i<num_vertices; i++)
     {
-        
         Vertex* vertex = (Vertex*)malloc(sizeof(Vertex));
         glm::vec3 vector;
 
@@ -230,6 +230,7 @@ Mesh* processMesh(Model* model, aiMesh* ai_mesh, const aiScene* scene)
     return mesh;
 }
 
+
 unsigned int getMeshTextureCount(const aiScene* scene, aiMesh* mesh)
 {
     unsigned int count = 0;
@@ -263,6 +264,9 @@ void loadMaterialTextures(Model* model, Mesh* mesh, aiMaterial* mat, aiTextureTy
     {
         aiString str;
         mat->GetTexture(type, i, &str);
+        bool gamma;
+        if(strcmp(typeName, "texture_diffuse")==0) gamma = true;
+        else gamma = false;
 
         bool skip = false;
         const char* assimpPath = str.C_Str();
@@ -281,7 +285,8 @@ void loadMaterialTextures(Model* model, Mesh* mesh, aiMaterial* mat, aiTextureTy
         if(!skip)
         {
             Texture* texture = (Texture*)malloc(sizeof(Texture));
-            texture->id = TextureFromFile(str.C_Str(), model->directory, false);
+            
+            texture->id = TextureFromFile(str.C_Str(), model->directory, gamma);
             texture->type = stringCopy(typeName);
             texture->path = stringCopy(str.C_Str());
             model->textures[model->cur_num_textures++] = texture;
@@ -307,17 +312,24 @@ unsigned int TextureFromFile(const char* path, const char* directory, bool gamma
 
     if(data)
     {
-        GLenum format;
+        GLenum internalFormat;
+        GLenum dataFormat;
 
         if(nrComponents == 1)
-            format = GL_RED;
+            internalFormat = dataFormat = GL_RED;
         if(nrComponents == 3)
-            format = GL_RGB;
+        {
+            internalFormat = gamma ? GL_SRGB : GL_RGB;
+            dataFormat = GL_RGB;
+        }
         if(nrComponents == 4)
-            format = GL_RGBA;
-
+        {
+            internalFormat = gamma ? GL_SRGB_ALPHA : GL_RGBA;
+            dataFormat = GL_RGBA;
+        }
+            
         glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -332,6 +344,37 @@ unsigned int TextureFromFile(const char* path, const char* directory, bool gamma
     free(filename);
     return textureID;
 }
+//TODO: complete this
+unsigned int loadCubeMap(char** faces, unsigned int num_faces)
+{
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+    int width, height, nrChannels;
+    for(unsigned int i=0; i<num_faces; i++)
+    {
+        unsigned char* data = stbi_load(faces[i], &width, &height, &nrChannels, 0);
+        if(data)
+        {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            stbi_image_free(data);
+        }
+        else
+        {
+            printf("Cubemap texture failed to load at path: %s\n", faces[i]);
+            stbi_image_free(data);
+        }
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    return textureID;
+}
+
 BoundingBox* createBoundingBox(glm::vec3 v1, glm::vec3 v7)
 {
     BoundingBox* box = (BoundingBox*)malloc(sizeof(BoundingBox));
@@ -403,6 +446,22 @@ void setupMesh(Mesh* mesh)
     glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, BiTangent));
 
     glBindVertexArray(0);
+}
+
+void setupSkyBox(Mesh* skybox)
+{
+    unsigned int skyboxVAO, skyboxVBO;
+    glGenVertexArrays(1, &skyboxVAO);
+    glGenBuffers(1, &skyboxVBO);
+
+    skybox->VBO = skyboxVBO;
+    skybox->VAO = skyboxVAO;
+
+    glBindVertexArray(skyboxVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+    glBufferData(GL_ARRAY_BUFFER, skybox->num_vertices*sizeof(float), &(skybox->vertices[0]), GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 }
 
 void drawMesh(Model* model, Mesh* mesh, Shader* shader)

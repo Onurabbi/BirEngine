@@ -38,8 +38,7 @@ void render(Level* level, Model* model, Shader* shader, Camera* camera)
     setMat4(shader, "projection", projectionMatrix);
     setMat4(shader, "view", viewMatrix);
     setVec3(shader, "viewPos", camera->Position);
-    setFloat(shader, "shininess", 64.0);
-
+    setFloat(shader, "shininess", 16.0);
 
     for(unsigned int i=0; i<level->num_rooms; i++)
     {
@@ -52,3 +51,4 @@ void render(Level* level, Model* model, Shader* shader, Camera* camera)
         }  
     }
 }
+

@@ -167,6 +167,7 @@ void bindAttribute(struct Shader* shader, unsigned int attribute, const char* va
 void loadDirectionalLight(Shader* shader, DirectionalLight* dirLight)
 {
     setVec3(shader, "dirLight.direction", dirLight->direction);
+    setVec3(shader, "dirLight.position", dirLight->position);
     setVec3(shader, "dirLight.ambient", dirLight->ambient);
     setVec3(shader, "dirLight.diffuse", dirLight->diffuse);
     setVec3(shader, "dirLight.specular", dirLight->specular);

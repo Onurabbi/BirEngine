@@ -16,5 +16,7 @@ void prepareRenderer();
 
 void render(Level* level, Model* model, Shader* shader, Camera* camera);
 
+void renderSkyBox(Shader* shader, Camera* camera);
+
 #endif
 

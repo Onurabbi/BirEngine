@@ -121,4 +121,8 @@ Portal* createPortal(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec3 v4);
 
 void updateBoundingBox(BoundingBox* box, glm::vec3 vector);
 
+unsigned int loadCubeMap(char** faces, unsigned int num_faces);
+
+void setupSkyBox(float* vert);
+
 #endif
