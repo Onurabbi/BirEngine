@@ -447,7 +447,7 @@ void setupMesh(Mesh* mesh)
 
     glBindVertexArray(0);
 }
-
+//TODO: complete skybox rendering
 void setupSkyBox(Mesh* skybox)
 {
     unsigned int skyboxVAO, skyboxVBO;

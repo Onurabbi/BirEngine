@@ -13,10 +13,15 @@
 #include "Level.h"
 #include "Shader.h"
 #include "Renderer.h"
+#include "Light.h"
+
+extern const int SHADOW_WIDTH;
+extern const int SHADOW_HEIGHT;
 
 void initiateRenderer()
 {
     glEnable(GL_CULL_FACE);
+    glEnable(GL_MULTISAMPLE);
     glCullFace(GL_BACK);
 }
 

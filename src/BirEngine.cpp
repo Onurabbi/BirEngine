@@ -28,6 +28,7 @@ int main()
     Shader* shader = createShader("Shaders/vertexShader.vs", "Shaders/fragmentShader.fs");
     Model* levelModel = createModel("assets/Medieval/Demonstration.obj", false);
     Level* level = createLevel("level.txt", levelModel);
+
     //lighting
     DirectionalLight* dirLight = createDirectionalLight(glm::vec3(200000.0f, 40000.0f, 20000.0f),
                                                         glm::vec3(0.1f, 0.1f, 0.1f),
@@ -42,16 +43,7 @@ int main()
                                            glm::vec3(0.0f, 0.0f, 0.0f),
                                            glm::vec3(0.402f, 0.65f, 1.0f),
                                            1.0f, 0.0014f, 0.000007f, 15.0f, 25.0f);
-    //TODO: complete skybox implementation
-    /*char* faces[6] = 
-    {   "assets/Skybox/right.jpg",
-        "assets/Skybox/left.jpg",
-        "assets/Skybox/top.jpg",
-        "assets/Skybox/bottom.jpg",
-        "assets/Skybox/front.jpg",
-        "assets/Skybox/back.jpg"
-    };*/
-    
+                                           
     while(!glfwWindowShouldClose(window))
     {
         float currentFrame = glfwGetTime();

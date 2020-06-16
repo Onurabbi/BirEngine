@@ -1,6 +1,6 @@
 # BirEngine
 
-This is a 3D Game Engine written in C++ using OpenGL/GLSL programmable pipeline. You can view the engine in action here: https://drive.google.com/open?id=1EGnrf33Gpre6SsCIEaCXF2F5BuBW1lSa
+This is a 3D Game Engine written in C++ using OpenGL/GLSL programmable pipeline.
 
 Overview
 
@@ -11,6 +11,7 @@ This is a 3D Engine currently capable of:
 3. Blinn-Phong shading.
 4. Normal Mapping
 5. Portal based occlusion culling.
+6. Multi-sample anti aliasing
 
 Dependencies
 
@@ -29,4 +30,4 @@ There are few libraries that this code is developed with. Please find them below
 
 Screenshots
 
-![](/Screenshots/SS1.png) ![](/Screenshots/SS2.png) ![](/Screenshots/SS3.png)
+![](/Screenshots/SS1.png) ![](/Screenshots/SS2.png) ![](/Screenshots/SS3.png) ![](/Screenshots/SS4.png)
